@@ -1,0 +1,85 @@
+# ============================================================
+# 新規ユーザー追加時のサンプル values ファイル
+# 使い方:
+#   1. このファイルをコピーして values-<ユーザー名>.yaml にリネーム
+#   2. "# ★" のついた項目を変更する
+#   3. helm install agent-zero-<ユーザー名> ../agent-zero-gke -f values-<ユーザー名>.yaml
+# ============================================================
+# 
+# podLabels:
+#   app: agent-zero
+#   user: sample          # ★ Terraform の locals.users のキーと完全一致させること
+# 
+# env:
+#   - name: API_KEY_GOOGLE
+#     value: "YOUR_GOOGLE_API_KEY"  # ★ Google API キー
+#   - name: AUTH_LOGIN
+#     value: "admin"                # ★ Agent Zero ログインユーザー名
+#   - name: AUTH_PASSWORD
+#     value: "YOUR_PASSWORD"        # ★ Agent Zero ログインパスワード
+# 
+# pvc:
+#   name: agent-zero-pvc-sample     # ★ ユーザーごとに固有の名前（既存と被らないこと）
+#   storageClassName: standard-rwo
+#   storage: 10Gi                   # 必要に応じて変更
+# 
+# volumes:
+#   - name: agent-data
+#     persistentVolumeClaim:
+#       claimName: agent-zero-pvc-sample  # ★ pvc.name と同じ値にすること
+# 
+# Terraform が Service を管理するため必ず false のまま
+# service:
+#   enabled: false
+# 
+# ── 以下は基本的に変更不要 ────────────────────────────────
+# 
+# replicaCount: 1
+# 
+# image:
+#   repository: agent0ai/agent-zero
+#   pullPolicy: IfNotPresent
+#   tag: "latest"
+# 
+# resources:
+#   limits:
+#     cpu: 500m
+#     memory: 2Gi
+#   requests:
+#     cpu: 100m
+#     memory: 512Mi
+# 
+# volumeMounts:
+#   - name: agent-data
+#     mountPath: /a0/agents
+#     subPath: agents
+#   - name: agent-data
+#     mountPath: /a0/knowledge
+#     subPath: knowledge
+#   - name: agent-data
+#     mountPath: /a0/usr
+#     subPath: usr
+#   - name: agent-data
+#     mountPath: /a0/logs
+#     subPath: logs
+#   - name: agent-data
+#     mountPath: /a0/plugins
+#     subPath: plugins
+#   - name: agent-data
+#     mountPath: /a0/skills
+#     subPath: skills
+#   - name: agent-data
+#     mountPath: /a0/prompts
+#     subPath: prompts
+# 
+# strategy:
+#   type: RollingUpdate
+#   rollingUpdate:
+#     maxUnavailable: 0
+#     maxSurge: 1
+# 
+# autoscaling:
+#   enabled: false
+#   minReplicas: 1
+#   maxReplicas: 3
+#   targetCPUUtilizationPercentage: 80
